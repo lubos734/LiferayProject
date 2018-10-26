@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd 
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd 
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-4.2.xsd 
+	http://www.springframework.org/schema/mvc 
+	http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+	http://www.springframework.org/schema/task
+	http://www.springframework.org/schema/task/spring-task-3.0.xsd
+	http://mybatis.org/schema/mybatis-spring 
+	http://mybatis.org/schema/mybatis-spring.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+
+	<!--Enables @Autowired annotation -->
+	<context:annotation-config />
+	
+	<!--Enables annotation scheduling -->
+	<task:annotation-driven />  
+	
+	<!-- JSR-303 validation support -->
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        <!--<property name="messageInterpolator">
+            <bean class="eu.ibacz.commons.portlet.SpringMessageInterpolator" />
+        </property>-->
+    </bean>
+	<!-- Converter -->
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean" >
+    	<property name="formatters">
+	        <set>
+	            <bean class="cz.lubos.portlet.commons.DateFormatter"/>
+	            <bean class="cz.lubos.portlet.commons.StringFormatter"/>
+	        </set>
+	    </property>
+	</bean>
+    <bean id="webBindingInitializer" class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer">
+        <property name="validator" ref="validator" />
+        <property name="conversionService" ref="conversionService" />
+    </bean>
+    <bean class="org.springframework.web.portlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="webBindingInitializer">
+            <ref bean="webBindingInitializer" />
+        </property>
+    </bean>
+    <!-- Allows use JSR-303 annotations -->
+    <mvc:annotation-driven conversion-service="conversionService" validator="validator" />
+
+	
+	<!--Enable component scan in package service -->
+	<context:component-scan base-package="cz.lubos.service.**, cz.lubos.portlet.commons.**" />
+	
+	
+	<!-- Spring MVC VIEW Configuration -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="contentType" value="text/html;charset=UTF-8" />
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+	</bean>
+	<!-- End Spring MVC VIEW Configuration -->
+	
+	
+
+</beans>

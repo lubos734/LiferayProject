@@ -1,0 +1,77 @@
+<%@ page import="javax.portlet.RenderRequest" %>
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<%@ taglib prefix="portlet" uri="http://java.sun.com/portlet_2_0" %>
+
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
+<%@ taglib prefix="liferay-ui" uri="http://liferay.com/tld/ui" %>
+<%@ taglib prefix="liferay-theme" uri="http://liferay.com/tld/theme" %>
+<%@ taglib prefix="liferay-portlet" uri="http://liferay.com/tld/portlet" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+<%@page import="static cz.lubos.portlet.commons.PortletUtils.*" %>
+<%@page import="static cz.lubos.portlet.commons.RedirectUtils.*" %>
+
+
+<portlet:defineObjects />
+<liferay-theme:defineObjects />
+
+<c:set var="contextPath"><%=request.getContextPath()%></c:set>
+<c:set var="ns"><portlet:namespace /></c:set>
+
+<c:if test="${not empty pageSuccessCode}">
+	<div class="alert alert-success alert-dismissible fade in sonetAlert" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<spring:message code="${pageSuccessCode}" arguments="${pageSuccessArgs}" />
+	</div>
+</c:if>
+
+<c:if test="${not empty pageErrorCode}">
+	<div class="alert alert-danger alert-dismissible fade in sonetAlert" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<spring:message code="${pageErrorCode}" arguments="${pageErrorArgs}" />
+	</div>
+</c:if>
+
+<c:if test="${not empty pageWarningCode}">
+	<div class="alert alert-warning alert-dismissible fade in sonetAlert" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<spring:message code="${pageWarningCode}" arguments="${pageWarningArgs}" />
+	</div>
+</c:if>
+
+<c:if test="${not empty pageInfoCode}">
+	<div class="alert alert-info alert-dismissible fade in sonetAlert" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<spring:message code="${pageInfoCode}" arguments="${pageInfoArgs}" />
+	</div>
+</c:if>
+
+<div class="alert alert-success alert-dismissible fade in sonetAlert" role="alert" id="${ns}pageSuccessId" style="display: none">
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<span id="${ns}pageSuccessIdText" ></span>
+</div>
+
+<div class="alert alert-danger alert-dismissible fade in sonetAlert" role="alert" id="${ns}pageErrorId" style="display: none">
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<span id="${ns}pageErrorIdText" ></span>
+</div>
+
+<div class="alert alert-warning alert-dismissible fade in sonetAlert" role="alert" id="${ns}pageWarningId" style="display: none">
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<span id="${ns}pageWarningIdText" ></span>
+</div>
+
+<div class="alert alert-info alert-dismissible fade in sonetAlert" role="alert" id="${ns}pageInfoId" style="display: none">
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<span id="${ns}pageInfoIdText" ></span>
+</div>
+
+
+
+ 

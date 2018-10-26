@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cz.lubos.service.mapper.VwDivisionDirectManagerMapper" >
+  <resultMap id="BaseResultMap" type="cz.lubos.api.division.dto.Division" >
+  	<id column="div_id" property="id" jdbcType="INTEGER" />
+    <result column="div_name" property="name" jdbcType="VARCHAR" />
+    <result column="man_div_id" property="parentId" jdbcType="INTEGER" />
+    <result column="counted" property="level" jdbcType="BIGINT" />
+  </resultMap>
+  
+  <sql id="BaseColumnList" >
+    div_id, div_name, man_div_id, counted
+  </sql>
+  
+  <select id="selectAllDivisions" resultMap="BaseResultMap" >
+  	SELECT
+  		<include refid="BaseColumnList" />
+  	FROM
+  		organizational_structure.vw_division_direct_manager
+    ORDER BY
+    	counted ASC	
+  </select>
+  
+</mapper>

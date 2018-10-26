@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cz.lubos.service.mapper.DivisionMapper" >
+
+	<resultMap id="BaseResultMap"
+		type="cz.lubos.service.dbo.DivisionDbo">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="id_parent" property="idParent" jdbcType="INTEGER" />
+		<result column="depth" property="depth" jdbcType="INTEGER" />
+	</resultMap>
+ 	
+ 	<resultMap id="CodelistResultMap" type="cz.lubos.api.CodeListDto" >
+    	<result column="id" property="id" jdbcType="INTEGER" />
+    	<result column="name" property="name" jdbcType="VARCHAR" />
+	</resultMap>
+ 	
+  	<sql id="InsertList">
+  		name, division_id, valid_date_from, abbreviation
+	</sql>
+
+	<sql id="BaseColumnList">
+		id, name, id_parent, depth
+	</sql>
+  
+	<update id="deactivateDivision" parameterType="map">
+		Update
+			organizational_structure.division
+		SET
+			valid_date_to = #{validDateTo}
+		WHERE
+			id = #{id} 
+	</update>  
+	
+	<update id="updateData" parameterType="cz.lubos.api.division.dto.Division">
+		Update
+			organizational_structure.division
+		SET
+			name = #{name},
+	  		division_id = #{parentId},
+	  		valid_date_from = #{validDateFrom},
+			abbreviation = #{abbreviation}
+		WHERE
+			id = #{id} 
+	</update>  
+  
+  
+  	<insert id="insertData" parameterType="cz.lubos.api.division.dto.Division">
+	  	INSERT INTO organizational_structure.division (<include refid="InsertList" /> )
+	  	VALUES (
+	  		#{name,jdbcType=VARCHAR},
+	  		#{parentId,jdbcType=INTEGER},
+	  		#{validDateFrom,jdbcType=TIMESTAMP},
+	  		#{abbreviation,jdbcType=VARCHAR}
+	  	)
+  	</insert>
+
+	<!-- Select root node -->
+	<select id="selectRootNode" resultType="cz.lubos.api.division.dto.Division">
+		SELECT 
+			id, name
+		FROM
+			organizational_structure.division
+		WHERE
+			division_id is null AND valid_date_to is null
+	</select>
+
+	<select id="selectDivisionNames" resultMap="CodelistResultMap">
+		SELECT 
+			id, name
+		FROM
+			organizational_structure.division
+		ORDER BY name
+	</select>
+	
+	
+	
+	<select id="selectDivisionName" resultType="java.lang.String">
+		SELECT 
+			name
+		FROM
+			organizational_structure.division
+		WHERE
+			(valid_date_to IS NULL 
+			OR 
+			valid_date_to >= 'now'::text::date
+			)
+			AND
+			id = #{divisionId}
+	</select>
+	
+  
+</mapper>

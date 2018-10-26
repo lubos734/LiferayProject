@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cz.lubos.service.mapper.VwDivisionOverviewMapper" >
+  <resultMap id="BaseResultMap" type="cz.lubos.api.division.dto.DivisionOverview" >
+  	<id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="abbreviation" property="abbreviation" jdbcType="VARCHAR" />
+    <result column="parent_division_name" property="parentDivisionName" jdbcType="VARCHAR" />
+    <result column="division_id" property="parentId" jdbcType="INTEGER" />
+    <result column="valid_date_from" property="validDateFrom" jdbcType="TIMESTAMP" />
+   	<result column="valid_date_to" property="validDateTo" jdbcType="TIMESTAMP" />
+   	<result column="is_taken" property="isTaken" jdbcType="BIT" />
+  </resultMap>
+  
+   <resultMap id="AutocompleteResultMap" type="cz.lubos.api.CodeListDto" >
+  	<id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="BaseColumnList" >
+    id, name, abbreviation, division_id, valid_date_from, valid_date_to, parent_division_name, is_taken
+  </sql>
+  
+  <sql id="AutocompleteList" >
+    id, name
+  </sql>
+  
+  <select id="selectAllDivisions" resultMap="AutocompleteResultMap" >
+  	SELECT
+  		<include refid="AutocompleteList" />
+  	FROM
+  		organizational_structure.vw_division_overview
+  	WHERE
+  		((valid_date_to is null) OR (valid_date_to > CURRENT_TIMESTAMP))
+	ORDER BY
+		name
+	
+  </select>
+  
+    <!-- select data for table -->
+  <select id="selectTableData" resultMap="BaseResultMap" parameterType="map">
+  	SELECT
+  		<include refid="BaseColumnList" />
+  	FROM
+  		organizational_structure.vw_division_overview
+	
+	<include refid="WhereClause" />
+	  		
+  	ORDER BY ${filter.orderByColumn}
+			${filter.order}
+	OFFSET #{filter.start} 
+    LIMIT #{filter.count} 
+  
+  </select>
+  
+  
+  <select id="selectDataForExport" resultMap="BaseResultMap" parameterType="map">
+  	SELECT
+  		<include refid="BaseColumnList" />
+  	FROM
+  		organizational_structure.vw_division_overview
+	
+	<include refid="WhereClause" />
+	  		
+  </select>
+  
+  <select id="selectTableDataCount" resultType="java.lang.Integer" parameterType="map">
+  	SELECT 
+    		count(id) 
+   	FROM
+    	organizational_structure.vw_division_overview
+    	
+    <include refid="WhereClause" />
+  </select>
+  
+  <select id="selectDataById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	SELECT 
+    		<include refid="BaseColumnList" />
+   	FROM
+    	organizational_structure.vw_division_overview
+    WHERE
+    	id = #{id}
+  </select>
+  
+  
+  <select id="selectChildrenDivision" resultType="java.lang.String" parameterType="java.lang.Integer">
+  	SELECT 
+    		name
+   	FROM
+    	organizational_structure.vw_division_overview
+    WHERE
+    	division_id = #{id}
+    	AND 
+    	((valid_date_to is null) OR (valid_date_to > CURRENT_TIMESTAMP))
+  </select>
+  
+  <select id="selectValidFrom" resultType="java.util.Date" parameterType="java.lang.Integer">
+  	SELECT 
+    	valid_date_from
+   	FROM
+    	organizational_structure.vw_division_overview
+    WHERE
+    	id = #{id}
+  </select>
+  
+  <!--  Where clause with conditions -->
+  	<sql id="WhereClause" >
+  		<where>
+  			<if test="filter.applyShowActive()"> 
+  				((valid_date_to is null) OR (valid_date_to > CURRENT_TIMESTAMP))
+  			</if>	
+  			<if test="filter.applyId()">
+	       		AND 
+				id = #{filter.id}
+	   		</if>
+  		
+  			<if test="filter.applyValidDateFrom()">
+  				AND
+	       		valid_date_from &gt;= #{filter.validDateFrom}
+	   		</if>
+	   		
+	   		<if test="filter.applyValidDateTo()">
+	   			AND
+	       		valid_date_to &lt;= #{filter.validDateTo}
+	   		</if>
+	   		
+	   	</where>
+  	</sql>
+  
+</mapper>

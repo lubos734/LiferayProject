@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cz.lubos.service.mapper.VwJobPositionOverviewMapper" >
+  
+  <select id="selectDataByDivisionId" resultType="java.lang.String" parameterType="java.lang.Integer">
+  	SELECT 
+   		name
+   	FROM
+    	organizational_structure.vw_job_position_overview
+    WHERE
+    	division_id = #{divisionId}
+    	AND 
+    	((valid_date_to is null) OR (valid_date_to > CURRENT_TIMESTAMP))
+  </select>
+  
+</mapper>
